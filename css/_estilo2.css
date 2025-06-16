@@ -1,0 +1,118 @@
+/* Importação de fontes */
+@import url('https://fonts.googleapis.com/css2?family=Jersey+15+Charted&display=swap');
+
+@font-face {
+  font-family: 'FonteLogo';
+  src: url("index.php/Jersey15Charted-Regular.ttf");
+}
+
+/* Menu */
+nav#menu {
+  position: relative;
+}
+
+nav#menu ul {
+  list-style: none;
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+/* Cor inicial dos caracteres do menu*/ 
+nav#menu li {
+  background-color: #777;
+  padding: 8px;
+  margin: 4px;
+  transition: background-color transparent;
+}
+/* cor do fundo dos caracteres do menu */
+nav#menu li:hover {
+  background-color: transparent;
+}
+/* cor dos caracteres do menu */
+nav#menu a {
+  color: white;
+  text-decoration: none;
+}
+
+nav#menu a:hover {
+  color: #black;
+}
+
+/* Interface */
+div#interface {
+  width: 30%;
+  max-width: 400px;
+  margin: 10px auto;
+  box-shadow: 0px 0px 5px black;
+  padding: 20px;
+  background-color: transparent;
+}
+
+/* Cabeçalho */
+header#cabecalho {
+  height: 50px;
+  background-image: url("");
+  background-size: cover;
+  background-position: center;
+}
+
+header#cabecalho img#icone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+header#cabecalho h1 {
+  font-family: 'FonteLogo', sans-serif;
+  font-size: 40px;
+  color: white;
+  text-align: center;
+}
+
+header#cabecalho h2 {
+  font-family: "Jersey 15 Charted", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  font-style: normal;
+  color: white;
+  text-shadow: 4px 4px 4px black;
+  text-align: center;
+}
+
+/* Tabela de Sensores */
+section#corpo {
+  display: block;
+  width: 100%;
+}
+
+table#tabela1 {
+  border: 1px solid #0000;
+  border-spacing: 10px;
+  margin: 0 auto;
+  width: 80%;
+}
+
+table#tabela1 caption span {
+  display: block;
+  float: right;
+  color: white;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+table#tabela1 td {
+  border: 1px solid #606060;
+  padding: 10px;
+}
+
+/* Rodapé */
+footer#rodape {
+  clear: both;
+  border-top: 1px solid #000000;
+  text-align: center;
+  padding: 20px;
+}
+
