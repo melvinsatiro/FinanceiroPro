@@ -1,0 +1,80 @@
+package com.example.demo;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+public class WebController {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @GetMapping("/api/stats")
+    public Map<String, Object> getStats(HttpSession session) {
+        // BLOQUEIO DE SEGURANÇA
+        if (session.getAttribute("usuarioLogado") == null) {
+            return null;
+        }
+
+        Map<String, Object> stats = new HashMap<>();
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+
+        // 1. Memória RAM
+        long totalRAM = osBean.getTotalMemorySize() / (1024 * 1024);
+        long freeRAM = osBean.getFreeMemorySize() / (1024 * 1024);
+        stats.put("ramUsada", (totalRAM - freeRAM) + " MB");
+        stats.put("ramLivre", freeRAM + " MB");
+
+        // 2. CPU: Uso e Temperatura
+        double cpuLoad = osBean.getCpuLoad() * 100;
+        stats.put("cpuUso", String.format("%.1f%%", cpuLoad));
+        
+        try {
+            String tempStr = Files.readAllLines(Paths.get("/sys/class/thermal/thermal_zone0/temp")).get(0);
+            double tempC = Double.parseDouble(tempStr) / 1000.0;
+            stats.put("cpuTemp", String.format("%.1f°C", tempC));
+        } catch (Exception e) {
+            stats.put("cpuTemp", "N/A");
+        }
+
+        // 3. Armazenamento SSD Principal (/)
+        File rootDir = new File("/");
+        long totalSSD = rootDir.getTotalSpace() / (1024 * 1024 * 1024);
+        long freeSSD = rootDir.getFreeSpace() / (1024 * 1024 * 1024);
+        stats.put("ssdUsado", (totalSSD - freeSSD) + " GB");
+        stats.put("ssdLivre", freeSSD + " GB");
+
+        // 4. Armazenamento Externo (/mnt/hd)
+        File sda1 = new File("/mnt/hd");
+        if (sda1.exists()) {
+            long totalSda = sda1.getTotalSpace() / (1024 * 1024 * 1024);
+            long freeSda = sda1.getFreeSpace() / (1024 * 1024 * 1024);
+            stats.put("sda1Usado", (totalSda - freeSda) + " GB");
+            stats.put("sda1Livre", freeSda + " GB");
+        } else {
+            stats.put("sda1Usado", "0 GB");
+            stats.put("sda1Livre", "Não montado");
+        }
+
+        // 5. Tamanho do Banco de Dados MySQL
+        try {
+            String sql = "SELECT SUM(data_length + index_length) / 1024 / 1024 FROM information_schema.TABLES";
+            Double dbSize = jdbcTemplate.queryForObject(sql, Double.class);
+            stats.put("mysqlSize", String.format("%.2f MB", dbSize));
+        } catch (Exception e) {
+            stats.put("mysqlSize", "N/A");
+     
+
+        return stats;
+    }
+}
